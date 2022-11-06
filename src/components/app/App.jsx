@@ -10,7 +10,12 @@ import PostStatusFilter from '../post-status-filter/post-status-filter';
 import PostList from '../post-list/post-list';
 import PostAddForm from '../post-add-form/post-add-form';
 
-function App() {
+const App = () => {
+  const data = [
+    {text: 'Хоп, хей, лалалей', favorite: true, id: 1},
+    {text: 'Где вопросы', favorite: false, id: 2},
+    {text: 'Где ответы', favorite: false, id: 3},
+  ];
   return (
     <div className="app">
       <AppHeader/>
@@ -18,7 +23,7 @@ function App() {
         <SearchPanel/>
         <PostStatusFilter/>
       </div>
-      <PostList/>
+      <PostList posts={data}/>
       <PostAddForm/>
     </div>
   );
