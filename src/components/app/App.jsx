@@ -3,12 +3,18 @@ import './css-vendor/fontawesome/all.min.css';
 import './app.css';
 
 import React from 'react';
+import styled from 'styled-components';
 
 import AppHeader from '../app-header/app-header';
 import SearchPanel from '../search-panel/search-panel';
 import PostStatusFilter from '../post-status-filter/post-status-filter';
 import PostList from '../post-list/post-list';
 import PostAddForm from '../post-add-form/post-add-form';
+
+const AppBlock = styled.div`
+  margin: 0 auto;
+  max-width: 800px;
+`;
 
 const App = () => {
   const data = [
@@ -17,15 +23,15 @@ const App = () => {
     {text: 'Где ответы', favorite: false, id: 3},
   ];
   return (
-    <div className="app">
+    <AppBlock>
       <AppHeader/>
       <div className='search-panel d-flex'>
         <SearchPanel/>
         <PostStatusFilter/>
       </div>
-      <PostList posts={data}/>
+      <PostList posts={data} onDelete={(id => console.log(id))}/>
       <PostAddForm/>
-    </div>
+    </AppBlock>
   );
 }
 
