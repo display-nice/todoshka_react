@@ -29,7 +29,15 @@ export default class App extends Component {
     this.deleteItem = this.deleteItem.bind(this);
 	}
   deleteItem(id) {
-    console.log(id);
+    this.setState(({data}) => {
+      const index = data.findIndex(dataElement => dataElement.id === id);
+      const before = data.slice(0, index);
+      const after = data.slice(index + 1);
+      const newArray = [...before, ...after]
+      return {
+        data: newArray
+      }
+    })
   }
 	render() {
 		return (
