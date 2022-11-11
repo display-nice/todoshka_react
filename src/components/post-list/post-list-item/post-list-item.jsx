@@ -2,30 +2,10 @@ import React, { Component } from "react";
 import "./post-list-item.scss";
 
 export default class PostListItem extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			favorite: false,
-			like: false,
-		}
-		this.onFavorite = this.onFavorite.bind(this);
-		this.onLike = this.onLike.bind(this);
-	}
-	onFavorite() {
-		this.setState(({favorite}) => ({
-			favorite: !favorite,
-		}))
-	}
-	onLike() {
-		this.setState(({like}) => ({
-			like: !like,
-		}))
-	}
 	render() {
-		const { text, onDelete } = this.props;
-		const {favorite, like} = this.state;
+		const { text, onDelete, onToggleImportant, onToggleLiked, important, like } = this.props;
 		let classNames = "app-list-item d-flex justify-content-between";
-		if (favorite) {
+		if (important) {
 			classNames += " important";
 		}
 		if (like) {
@@ -33,9 +13,9 @@ export default class PostListItem extends Component {
 		}
 		return (
 			<div className={classNames}>
-				<span onClick={this.onLike} className="app-list-item-label">{text}</span>
+				<span onClick={onToggleLiked} className="app-list-item-label">{text}</span>
 				<div className="d-flex justify-content-center align-items-center">
-					<button onClick={this.onFavorite} className="btn-star btn-sm" type="button">
+					<button onClick={onToggleImportant} className="btn-star btn-sm" type="button">
 						<i className="fa-solid fa-star"></i>
 					</button>
 					<button onClick={onDelete} className="btn-trash btn-sm" type="button">
@@ -48,11 +28,11 @@ export default class PostListItem extends Component {
 	}
 }
 
-// favorite = false это установка значения favorite по умолчанию в "false"
+// important = false это установка значения important по умолчанию в "false"
 // то есть фолс будет, если такой проп не придёт.
-// const PostListItem = ({ text, favorite = false }) => {
+// const PostListItem = ({ text, important = false }) => {
 // 	let classNames = "app-list-item d-flex justify-content-between";
-// 	if (favorite) {
+// 	if (important) {
 // 		classNames += " important";
 // 	}
 // 	return (

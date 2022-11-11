@@ -21,23 +21,48 @@ export default class App extends Component {
 		super(props);
 		this.state = {
 			data: [
-				{ text: "Хоп, хей, лалалей", favorite: true, id: 1 },
-				{ text: "Где вопросы", favorite: false, id: 2 },
-				{ text: "Где ответы", favorite: false, id: 3 },
+				{ text: "Хоп, хей, лалалей", important: true, like: false, id: 1 },
+				{ text: "Где вопросы", important: false, like: false, id: 2 },
+				{ text: "Где ответы", important: false, like: false, id: 3 },
 			],
 		};
-    this.deleteItem = this.deleteItem.bind(this);
+		this.deleteItem = this.deleteItem.bind(this);
+		this.addItem = this.addItem.bind(this);
+		this.onToggleImportant = this.onToggleImportant.bind(this);
+		this.onToggleLiked = this.onToggleLiked.bind(this);
+
+
+    this.maxId = 4;
 	}
-  deleteItem(id) {
+	deleteItem(id) {
+		this.setState(({ data }) => {
+			const index = data.findIndex((dataElement) => dataElement.id === id);
+			const before = data.slice(0, index);
+			const after = data.slice(index + 1);
+			const newArray = [...before, ...after];
+			return {
+				data: newArray,
+			};
+		});
+	}
+  addItem(userText) {
+    const newItem = {
+      label: userText,
+      important: false,
+      id: this.maxId++
+    }
     this.setState(({data}) => {
-      const index = data.findIndex(dataElement => dataElement.id === id);
-      const before = data.slice(0, index);
-      const after = data.slice(index + 1);
-      const newArray = [...before, ...after]
+      const newArr = [...data, newItem];
       return {
-        data: newArray
+        data: newArr
       }
     })
+  }
+  onToggleImportant(id) {
+    console.log(`important id = ${id}`);
+  }
+  onToggleLiked(id) {
+    console.log(`liked id = ${id}`);
   }
 	render() {
 		return (
@@ -47,10 +72,8 @@ export default class App extends Component {
 					<SearchPanel />
 					<PostStatusFilter />
 				</div>
-				<PostList 
-          posts={this.state.data} 
-          onDelete={this.deleteItem} />
-				<PostAddForm />
+				<PostList onDelete={this.deleteItem} onToggleImportant={this.onToggleImportant} onToggleLiked={this.onToggleLiked} posts={this.state.data} />
+				<PostAddForm onAdd={this.addItem} />
 			</AppBlock>
 		);
 	}
