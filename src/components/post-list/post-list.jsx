@@ -9,7 +9,12 @@ const PostList = ({ posts, onDelete, onToggleImportant, onToggleLiked }) => {
 		const { id, ...otherProps } = item;
 		return (
 			<li key={id} className="list-group-item">
-				<PostListItem {...otherProps} onDelete={ () => onDelete(id) } onToggleImportant={() => onToggleImportant(id)} onToggleLiked={() => onToggleLiked(id)}/>
+				<PostListItem 
+					{...otherProps} 
+					onDelete={ () => onDelete(id) } 
+					onToggleImportant={() => onToggleImportant(id)} 
+					onToggleLiked={() => onToggleLiked(id)}
+				/>
 				{/* <PostListItem text={item.text} important={item.important} /> */}
 				{/* тоже самое, но без spread-оператора */}
 			</li>
