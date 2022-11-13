@@ -30,9 +30,9 @@ export default class App extends Component {
 		this.addItem = this.addItem.bind(this);
 		this.onToggleImportant = this.onToggleImportant.bind(this);
 		this.onToggleLiked = this.onToggleLiked.bind(this);
+		this.makeNewArray = this.makeNewArray.bind(this);
 
-
-    this.maxId = 4;
+		this.maxId = 4;
 	}
 	deleteItem(id) {
 		this.setState(({ data }) => {
@@ -45,52 +45,80 @@ export default class App extends Component {
 			};
 		});
 	}
-  addItem(userText) {
-    const newItem = {
-      label: userText,
-      important: false,
-      id: this.maxId++
-    }
-    this.setState(({data}) => {
-      const newArr = [...data, newItem];
-      return {
-        data: newArr
-      }
-    })
-  }
-  onToggleImportant(id) {
-    console.log(`important id = ${id}`);
-  }
-  // onToggleLiked ищет лайкнутый пост в стейте и изменяет его в стейте подменой массива (иммутабельность) 
-  onToggleLiked(id) {
-    this.setState(({data}) => {
-		const index = data.findIndex(dataElement => dataElement.id === id);
+	addItem(userText) {
+		const newItem = {
+			label: userText,
+			important: false,
+			id: this.maxId++,
+		};
+		this.setState(({ data }) => {
+			const newArr = [...data, newItem];
+			return {
+				data: newArr,
+			};
+		});
+	}
+	// makeNewArray - часть управления метками important\like
+	// и готовит новый массив для setState (иммутабельность)
+	makeNewArray(data, id, type) {
+		const index = data.findIndex((dataElement) => dataElement.id === id);
 		const oldElement = data[index];
-		const newElement = {...oldElement, like: !oldElement.like} // берём старый объект, разворачиваем его спредом, а затем заменяем в нём значение свойства like
-		const before = data.slice(0, index); // это массив до искомого элемента 
-		const after = data.slice(index + 1); // это массив после искомого элемента
-		const newArray = [...before, newElement, ...after] // склеиваем новый массив из кусков старого плюс новый элемент
-		// заменяем содержимое старого массива содержимым нового массива
-		return {
-			data: newArray
+		let newElement;
+		switch (type) {
+			case ('important'):
+				// берём старый объект, разворачиваем его спредом, меняем в нём знач. св-ва important
+				newElement = { ...oldElement, important: !oldElement.important };
+				break;
+			case ('like'):
+				// берём старый объект, разворачиваем его спредом, меняем в нём знач. св-ва like
+				newElement = { ...oldElement, like: !oldElement.like }; 
+				break;
+			// no default
 		}
-	 })
-  }
+		const before = data.slice(0, index); // это массив до искомого элемента
+		const after = data.slice(index + 1); // это массив после искомого элемента
+		const newArray = [...before, newElement, ...after]; // склеиваем новый массив из кусков старого плюс новый элемент
+		return newArray;
+	}
+
+	// onToggleImportant - проброшенный в компонент post-list-item обработчик события
+	// управляет меткой "important" в стейте в data
+	onToggleImportant(id) {
+		this.setState(({ data }) => {
+			const type = 'important';
+			return {
+				data: this.makeNewArray(data, id, type)
+			};
+		});
+	}
+
+	// onToggleLiked - проброшенный в компонент post-list-item обработчик события
+	// управляет меткой "like" в стейте в data
+	onToggleLiked(id) {
+		this.setState(({ data }) => {
+			const type = 'like';
+			return {
+				data: this.makeNewArray(data, id, type)
+			};
+		});
+	}
 	render() {
-		const {data} = this.state;
-		const likedPostsQ = data.filter(elem => elem.like).length;
+		const { data } = this.state;
+		const likedPostsQ = data.filter((elem) => elem.like).length;
 		const allPostsQ = data.length;
 		return (
 			<AppBlock>
-				<AppHeader 
-					likedPostsQ={likedPostsQ}
-					allPostsQ={allPostsQ}
-				/>
+				<AppHeader likedPostsQ={likedPostsQ} allPostsQ={allPostsQ} />
 				<div className="search-panel d-flex">
 					<SearchPanel />
 					<PostStatusFilter />
 				</div>
-				<PostList onDelete={this.deleteItem} onToggleImportant={this.onToggleImportant} onToggleLiked={this.onToggleLiked} posts={this.state.data} />
+				<PostList
+					onDelete={this.deleteItem}
+					onToggleImportant={this.onToggleImportant}
+					onToggleLiked={this.onToggleLiked}
+					posts={this.state.data}
+				/>
 				<PostAddForm onAdd={this.addItem} />
 			</AppBlock>
 		);
