@@ -25,12 +25,15 @@ export default class App extends Component {
 				{ text: "Где вопросы", important: false, like: false, id: 2 },
 				{ text: "Где ответы", important: false, like: false, id: 3 },
 			],
+			searchedText: ''
 		};
 		this.deleteItem = this.deleteItem.bind(this);
 		this.addItem = this.addItem.bind(this);
 		this.onToggleImportant = this.onToggleImportant.bind(this);
 		this.onToggleLiked = this.onToggleLiked.bind(this);
 		this.makeNewArray = this.makeNewArray.bind(this);
+		this.findTask = this.findTask.bind(this);
+		this.onUpdateSearchAppJsx = this.onUpdateSearchAppJsx.bind(this);
 
 		this.maxId = 4;
 	}
@@ -59,6 +62,7 @@ export default class App extends Component {
 			};
 		});
 	}
+
 	// makeNewArray - часть управления метками important\like
 	// и готовит новый массив для setState (иммутабельность)
 	makeNewArray(data, id, type) {
@@ -103,22 +107,41 @@ export default class App extends Component {
 			};
 		});
 	}
+
+	findTask(tasks, searchedText) {
+		if (searchedText.length === 0) {
+			return tasks;
+		}
+		return tasks.filter( (task) => {
+			return task.text.indexOf(searchedText) > -1;
+		})
+	}
+
+	onUpdateSearchAppJsx(searchedText) {
+		this.setState({
+			searchedText: searchedText
+		})
+	}
+
 	render() {
-		const { data } = this.state;
+		const { data, searchedText } = this.state;
 		const likedPostsQ = data.filter((elem) => elem.like).length;
 		const allPostsQ = data.length;
+		const visibleTasks = this.findTask(data, searchedText)
 		return (
 			<AppBlock>
 				<AppHeader likedPostsQ={likedPostsQ} allPostsQ={allPostsQ} />
 				<div className="search-panel d-flex">
-					<SearchPanel />
+					<SearchPanel 
+						onUpdateSearchAppJsx={this.onUpdateSearchAppJsx}
+					/>
 					<PostStatusFilter />
 				</div>
 				<PostList
 					onDelete={this.deleteItem}
 					onToggleImportant={this.onToggleImportant}
 					onToggleLiked={this.onToggleLiked}
-					posts={this.state.data}
+					posts={visibleTasks}
 				/>
 				<PostAddForm onAdd={this.addItem} />
 			</AppBlock>
