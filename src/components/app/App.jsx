@@ -47,8 +47,9 @@ export default class App extends Component {
 	}
 	addItem(userText) {
 		const newItem = {
-			label: userText,
+			text: userText,
 			important: false,
+			like: false,
 			id: this.maxId++,
 		};
 		this.setState(({ data }) => {
