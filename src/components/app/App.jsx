@@ -25,7 +25,8 @@ export default class App extends Component {
 				{ text: "Где вопросы", important: false, like: false, id: 2 },
 				{ text: "Где ответы", important: false, like: false, id: 3 },
 			],
-			searchedText: ''
+			searchedText: '',
+			filterType: 'all'
 		};
 		this.deleteItem = this.deleteItem.bind(this);
 		this.addItem = this.addItem.bind(this);
@@ -108,6 +109,8 @@ export default class App extends Component {
 		});
 	}
 
+	// findTask - проброшена в комп. "search-panel", отвечает за поиск.
+	// получает таск, фильтрует, возвращает новый массив с фильтрованными тасками.
 	findTask(tasks, searchedText) {
 		if (searchedText.length === 0) {
 			return tasks;
@@ -117,17 +120,32 @@ export default class App extends Component {
 		})
 	}
 
+	// onUpdateSearchAppJsx - проброшена в комп. "search-panel"
+	// управляет значением "searchedText" в стейте
 	onUpdateSearchAppJsx(searchedText) {
 		this.setState({
 			searchedText: searchedText
 		})
 	}
 
+	filterTask(tasks, filterType) {
+		switch(filterType) {
+			case('iLiked'):
+				return tasks.filter(task => task.like)
+			case('all'):
+				return tasks
+			// no default
+		}
+	}
+	onFilterSelect = (filterType) => {
+		this.setState({filterType})
+	}
+
 	render() {
-		const { data, searchedText } = this.state;
+		const { data, searchedText, filterType } = this.state;
 		const likedPostsQ = data.filter((elem) => elem.like).length;
 		const allPostsQ = data.length;
-		const visibleTasks = this.findTask(data, searchedText)
+		const visibleTasks = this.filterTask(this.findTask(data, searchedText), filterType)
 		return (
 			<AppBlock>
 				<AppHeader likedPostsQ={likedPostsQ} allPostsQ={allPostsQ} />
@@ -135,7 +153,10 @@ export default class App extends Component {
 					<SearchPanel 
 						onUpdateSearchAppJsx={this.onUpdateSearchAppJsx}
 					/>
-					<PostStatusFilter />
+					<PostStatusFilter 
+						filterType={filterType}
+						onFilterSelect={this.onFilterSelect}
+					/>
 				</div>
 				<PostList
 					onDelete={this.deleteItem}
