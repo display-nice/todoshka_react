@@ -27,7 +27,7 @@ export default class PostStatusFilter extends React.Component {
 		});
 		return (
 			<div className='btn-group'>
-				{buttons}				
+				{buttons}
 			</div>
 		)
 	}	

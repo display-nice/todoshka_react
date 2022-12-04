@@ -93,7 +93,7 @@ export default class App extends Component {
 		this.setState(({ data }) => {
 			const type = 'important';
 			return {
-				data: this.makeNewArray(data, id, type)
+				data: this.makeNewArray(data, id, type)	
 			};
 		});
 	}
